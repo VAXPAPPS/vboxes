@@ -397,6 +397,7 @@ class _FilePickerField extends StatelessWidget {
     required this.controller,
     required this.hint,
     required this.onChanged,
+    // ignore: unused_element_parameter
     this.error,
     this.allowedExtensions,
   });

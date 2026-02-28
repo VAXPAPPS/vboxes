@@ -281,5 +281,4 @@ This project is part of the VAXP ecosystem.
 
 ---
 
-*Built with ❤️ using Flutter & libvirt*
-# vboxes
+
