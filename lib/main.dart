@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:venom/core/colors/vaxp_colors.dart';
-import 'package:venom/core/di/injection_container.dart';
+import 'package:vboxes/core/colors/vaxp_colors.dart';
+import 'package:vboxes/core/di/injection_container.dart';
 import 'package:window_manager/window_manager.dart';
 import 'core/theme/vaxp_theme.dart';
 import 'package:venom_config/venom_config.dart';
