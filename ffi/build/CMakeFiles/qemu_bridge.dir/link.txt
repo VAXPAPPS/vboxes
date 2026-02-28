@@ -1,0 +1,1 @@
+/usr/bin/c++ -fPIC -O3 -DNDEBUG -shared -Wl,-soname,libqemu_bridge.so -o libqemu_bridge.so CMakeFiles/qemu_bridge.dir/qemu_bridge.cc.o  -lvirt 

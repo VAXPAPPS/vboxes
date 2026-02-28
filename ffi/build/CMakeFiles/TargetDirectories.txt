@@ -1,0 +1,7 @@
+/home/x/Desktop/Vaxp-Template/ffi/build/CMakeFiles/qemu_bridge.dir
+/home/x/Desktop/Vaxp-Template/ffi/build/CMakeFiles/edit_cache.dir
+/home/x/Desktop/Vaxp-Template/ffi/build/CMakeFiles/rebuild_cache.dir
+/home/x/Desktop/Vaxp-Template/ffi/build/CMakeFiles/list_install_components.dir
+/home/x/Desktop/Vaxp-Template/ffi/build/CMakeFiles/install.dir
+/home/x/Desktop/Vaxp-Template/ffi/build/CMakeFiles/install/local.dir
+/home/x/Desktop/Vaxp-Template/ffi/build/CMakeFiles/install/strip.dir
