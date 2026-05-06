@@ -8,8 +8,8 @@ class CreateVmBloc extends Bloc<CreateVmEvent, CreateVmState> {
   final CreateVmUseCase _createVm;
 
   CreateVmBloc({required CreateVmUseCase createVm})
-      : _createVm = createVm,
-        super(const CreateVmInitial()) {
+    : _createVm = createVm,
+      super(const CreateVmInitial()) {
     on<UpdateVmName>(_onName);
     on<UpdateVcpus>(_onVcpus);
     on<UpdateRamMb>(_onRam);
@@ -23,8 +23,14 @@ class CreateVmBloc extends Bloc<CreateVmEvent, CreateVmState> {
   void _onName(UpdateVmName e, Emitter<CreateVmState> emit) {
     final cur = _form;
     if (cur == null) return;
-    final error = e.value.trim().isEmpty ? 'اسم الآلة مطلوب' : null;
-    emit(cur.copyWith(name: e.value.trim(), nameError: error, clearNameError: error == null));
+    final error = e.value.trim().isEmpty ? 'VM name is required' : null;
+    emit(
+      cur.copyWith(
+        name: e.value.trim(),
+        nameError: error,
+        clearNameError: error == null,
+      ),
+    );
   }
 
   void _onVcpus(UpdateVcpus e, Emitter<CreateVmState> emit) {

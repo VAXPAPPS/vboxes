@@ -1,15 +1,21 @@
-import 'dart:ui'; // مهم للـ ImageFilter
+import 'dart:ui'; // Required for ImageFilter.
 import 'package:flutter/material.dart';
 import 'package:window_manager/window_manager.dart';
 
 import 'package:venom_config/venom_config.dart';
 
-// 1. هذا هو الـ Layout الرئيسي الذي ستستخدمه في تطبيقك
+// Main layout used across the app.
 class VenomScaffold extends StatefulWidget {
-  final Widget body; // محتوى الصفحة (الإعدادات)
+  final Widget body; // Page content.
   final String title;
+  final bool showBackButton;
 
-  const VenomScaffold({super.key, required this.body, this.title = "Settings"});
+  const VenomScaffold({
+    super.key,
+    required this.body,
+    this.title = "Settings",
+    this.showBackButton = false,
+  });
 
   @override
   State<VenomScaffold> createState() => _VenomScaffoldState();
@@ -101,11 +107,11 @@ class _VenomScaffoldState extends State<VenomScaffold> {
       // 3. Inputs
       inputDecorationTheme: currentTheme.inputDecorationTheme.copyWith(
         labelStyle: TextStyle(color: _textColor),
-        hintStyle: TextStyle(color: _textColor.withOpacity(0.6)),
+        hintStyle: TextStyle(color: _textColor.withValues(alpha: 0.6)),
         prefixStyle: TextStyle(color: _textColor),
         suffixStyle: TextStyle(color: _textColor),
         enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: _textColor.withOpacity(0.3)),
+          borderSide: BorderSide(color: _textColor.withValues(alpha: 0.3)),
           borderRadius: BorderRadius.circular(8),
         ),
         focusedBorder: OutlineInputBorder(
@@ -134,7 +140,7 @@ class _VenomScaffoldState extends State<VenomScaffold> {
       // 6. TabBar
       tabBarTheme: currentTheme.tabBarTheme.copyWith(
         labelColor: _textColor,
-        unselectedLabelColor: _textColor.withOpacity(0.6),
+        unselectedLabelColor: _textColor.withValues(alpha: 0.6),
       ),
 
       // 7. Dialogs & Sheets
@@ -144,7 +150,7 @@ class _VenomScaffoldState extends State<VenomScaffold> {
           fontSize: 20,
           fontWeight: FontWeight.w600,
         ),
-        contentTextStyle: TextStyle(color: _textColor.withOpacity(0.8)),
+        contentTextStyle: TextStyle(color: _textColor.withValues(alpha: 0.8)),
       ),
       bottomSheetTheme: currentTheme.bottomSheetTheme.copyWith(
         // Background color usually handled by container, but could be set here
@@ -184,15 +190,21 @@ class _VenomScaffoldState extends State<VenomScaffold> {
       // 12. Navigation
       bottomNavigationBarTheme: currentTheme.bottomNavigationBarTheme.copyWith(
         selectedItemColor: _textColor,
-        unselectedItemColor: _textColor.withOpacity(0.6),
+        unselectedItemColor: _textColor.withValues(alpha: 0.6),
         selectedLabelStyle: TextStyle(color: _textColor),
-        unselectedLabelStyle: TextStyle(color: _textColor.withOpacity(0.6)),
+        unselectedLabelStyle: TextStyle(
+          color: _textColor.withValues(alpha: 0.6),
+        ),
       ),
       navigationRailTheme: currentTheme.navigationRailTheme.copyWith(
         selectedLabelTextStyle: TextStyle(color: _textColor),
-        unselectedLabelTextStyle: TextStyle(color: _textColor.withOpacity(0.6)),
+        unselectedLabelTextStyle: TextStyle(
+          color: _textColor.withValues(alpha: 0.6),
+        ),
         selectedIconTheme: IconThemeData(color: _textColor),
-        unselectedIconTheme: IconThemeData(color: _textColor.withOpacity(0.6)),
+        unselectedIconTheme: IconThemeData(
+          color: _textColor.withValues(alpha: 0.6),
+        ),
       ),
 
       // 13. Feedback
@@ -213,7 +225,7 @@ class _VenomScaffoldState extends State<VenomScaffold> {
         // Text color usually inherited from bodyText, but good to have
       ),
       dividerTheme: currentTheme.dividerTheme.copyWith(
-        color: _textColor.withOpacity(0.1),
+        color: _textColor.withValues(alpha: 0.1),
       ),
 
       // 15. Selection Controls
@@ -237,17 +249,15 @@ class _VenomScaffoldState extends State<VenomScaffold> {
         backgroundColor: _backgroundColor,
         body: Stack(
           children: [
-            // --- الطبقة 1: محتوى التطبيق ---
-            // نستخدم TweenAnimationBuilder لتحريك قيمة الـ Blur بنعومة
+            // Layer 1: app content.
+            // TweenAnimationBuilder animates the blur value smoothly.
             TweenAnimationBuilder<double>(
               tween: Tween<double>(
                 begin: 0.0,
-                end: _isCinematicBlurActive
-                    ? 10.0
-                    : 0.0, // قوة البلور (10 قوية وجميلة)
+                end: _isCinematicBlurActive ? 10.0 : 0.0, // Blur strength.
               ),
-              duration: const Duration(milliseconds: 300), // سرعة الأنيميشن
-              curve: Curves.easeOutCubic, // منحنى حركة ناعم
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeOutCubic,
               builder: (context, blurValue, child) {
                 return ImageFiltered(
                   imageFilter: ImageFilter.blur(
@@ -258,12 +268,14 @@ class _VenomScaffoldState extends State<VenomScaffold> {
                 );
               },
               child: Container(
-                margin: const EdgeInsets.only(top: 40), // نترك مساحة للـ Appbar
+                margin: const EdgeInsets.only(
+                  top: 40,
+                ), // Leave space for the app bar.
                 child: widget.body,
               ),
             ),
 
-            // --- الطبقة 2: شريط العنوان (فوق الكل) ---
+            // Layer 2: title bar.
             Positioned(
               top: 0,
               left: 0,
@@ -271,7 +283,8 @@ class _VenomScaffoldState extends State<VenomScaffold> {
               child: VenomAppbar(
                 title: widget.title,
                 textColor: _textColor,
-                // تمرير دالة للتحكم في البلور عند لمس الأزرار
+                showBackButton: widget.showBackButton,
+                // Control blur while hovering over the window buttons.
                 onHoverEnter: () => _setBlur(true),
                 onHoverExit: () => _setBlur(false),
               ),
@@ -283,12 +296,13 @@ class _VenomScaffoldState extends State<VenomScaffold> {
   }
 }
 
-// 2. شريط العنوان المعدل (يرسل إشارات الهوفر)
+// Title bar that emits hover signals.
 class VenomAppbar extends StatelessWidget {
   final String title;
   final VoidCallback onHoverEnter;
   final VoidCallback onHoverExit;
   final Color textColor;
+  final bool showBackButton;
 
   const VenomAppbar({
     super.key,
@@ -296,6 +310,7 @@ class VenomAppbar extends StatelessWidget {
     required this.onHoverEnter,
     required this.onHoverExit,
     this.textColor = Colors.white,
+    this.showBackButton = false,
   });
 
   @override
@@ -312,6 +327,10 @@ class VenomAppbar extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
         child: Row(
           children: [
+            if (showBackButton) ...[
+              _VenomBackButton(textColor: textColor),
+              const SizedBox(width: 8),
+            ],
             Padding(
               padding: const EdgeInsets.only(left: 15.0),
               child: Text(
@@ -326,9 +345,8 @@ class VenomAppbar extends StatelessWidget {
             ),
             const Spacer(),
 
-            // مجموعة الأزرار
-            // نستخدم MouseRegion واحد كبير حول الأزرار الثلاثة
-            // لضمان استمرار البلور عند التنقل بين زر وآخر
+            // Window buttons.
+            // One MouseRegion keeps the blur active while moving between buttons.
             MouseRegion(
               onEnter: (_) => onHoverEnter(),
               onExit: (_) => onHoverExit(),
@@ -370,18 +388,70 @@ class VenomAppbar extends StatelessWidget {
   }
 }
 
-// 3. زر النافذة (نفس الذي صممناه سابقاً مع تحسينات طفيفة)
+class _VenomBackButton extends StatefulWidget {
+  final Color textColor;
+
+  const _VenomBackButton({required this.textColor});
+
+  @override
+  State<_VenomBackButton> createState() => _VenomBackButtonState();
+}
+
+class _VenomBackButtonState extends State<_VenomBackButton> {
+  bool _isHovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Tooltip(
+      message: 'Back',
+      child: MouseRegion(
+        cursor: SystemMouseCursors.click,
+        onEnter: (_) => setState(() => _isHovered = true),
+        onExit: (_) => setState(() => _isHovered = false),
+        child: GestureDetector(
+          onTap: () {
+            if (Navigator.of(context).canPop()) {
+              Navigator.of(context).pop();
+            }
+          },
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 180),
+            curve: Curves.easeOut,
+            width: 28,
+            height: 24,
+            decoration: BoxDecoration(
+              color: _isHovered
+                  ? widget.textColor.withValues(alpha: 0.12)
+                  : Colors.white.withValues(alpha: 0.06),
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(
+                color: widget.textColor.withValues(alpha: 0.12),
+              ),
+            ),
+            child: Icon(
+              Icons.arrow_back_rounded,
+              size: 18,
+              color: widget.textColor.withValues(alpha: _isHovered ? 1 : 0.72),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// Window button.
 class VenomWindowButton extends StatefulWidget {
   final Color color;
   final IconData icon;
   final VoidCallback onPressed;
 
   const VenomWindowButton({
-    Key? key,
+    super.key,
     required this.color,
     required this.icon,
     required this.onPressed,
-  }) : super(key: key);
+  });
 
   @override
   State<VenomWindowButton> createState() => _VenomWindowButtonState();
@@ -409,8 +479,8 @@ class _VenomWindowButtonState extends State<VenomWindowButton> {
             boxShadow: _isHovered
                 ? [
                     BoxShadow(
-                      color: widget.color.withOpacity(0.8),
-                      blurRadius: 10, // زيادة التوهج قليلاً
+                      color: widget.color.withValues(alpha: 0.8),
+                      blurRadius: 10,
                       spreadRadius: 2,
                     ),
                   ]
@@ -423,7 +493,7 @@ class _VenomWindowButtonState extends State<VenomWindowButton> {
               child: Icon(
                 widget.icon,
                 size: 10,
-                color: Colors.black.withOpacity(0.7),
+                color: Colors.black.withValues(alpha: 0.7),
               ),
             ),
           ),

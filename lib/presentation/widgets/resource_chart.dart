@@ -27,10 +27,7 @@ class ResourceChart extends StatelessWidget {
             Container(
               width: 8,
               height: 8,
-              decoration: BoxDecoration(
-                color: color,
-                shape: BoxShape.circle,
-              ),
+              decoration: BoxDecoration(color: color, shape: BoxShape.circle),
             ),
             const SizedBox(width: 6),
             Text(
@@ -82,7 +79,7 @@ class _ChartPainter extends CustomPainter {
       ..shader = LinearGradient(
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
-        colors: [color.withOpacity(0.3), color.withOpacity(0.0)],
+        colors: [color.withValues(alpha: 0.3), color.withValues(alpha: 0.0)],
       ).createShader(Rect.fromLTWH(0, 0, size.width, size.height))
       ..style = PaintingStyle.fill;
 
@@ -93,7 +90,8 @@ class _ChartPainter extends CustomPainter {
 
     for (int i = 0; i < values.length; i++) {
       final x = i * stepX;
-      final y = size.height - (values[i].clamp(0.0, 100.0) / 100.0) * size.height;
+      final y =
+          size.height - (values[i].clamp(0.0, 100.0) / 100.0) * size.height;
 
       if (i == 0) {
         path.moveTo(x, y);
@@ -101,7 +99,9 @@ class _ChartPainter extends CustomPainter {
         fillPath.lineTo(x, y);
       } else {
         final prevX = (i - 1) * stepX;
-        final prevY = size.height - (values[i - 1].clamp(0.0, 100.0) / 100.0) * size.height;
+        final prevY =
+            size.height -
+            (values[i - 1].clamp(0.0, 100.0) / 100.0) * size.height;
         final cpX = (prevX + x) / 2;
         path.cubicTo(cpX, prevY, cpX, y, x, y);
         fillPath.cubicTo(cpX, prevY, cpX, y, x, y);

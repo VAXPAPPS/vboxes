@@ -34,9 +34,10 @@ class _VmCardState extends State<VmCard> with SingleTickerProviderStateMixin {
       vsync: this,
       duration: const Duration(seconds: 2),
     )..repeat(reverse: true);
-    _pulse = Tween<double>(begin: 0.7, end: 1.0).animate(
-      CurvedAnimation(parent: _pulseCtrl, curve: Curves.easeInOut),
-    );
+    _pulse = Tween<double>(
+      begin: 0.7,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _pulseCtrl, curve: Curves.easeInOut));
   }
 
   @override
@@ -47,10 +48,14 @@ class _VmCardState extends State<VmCard> with SingleTickerProviderStateMixin {
 
   Color get _statusColor {
     switch (widget.vm.status) {
-      case VmStatus.running: return const Color(0xFF34C759);
-      case VmStatus.paused:  return const Color(0xFFFFBD2E);
-      case VmStatus.crashed: return const Color(0xFFFF5F57);
-      default:               return Colors.white38;
+      case VmStatus.running:
+        return const Color(0xFF34C759);
+      case VmStatus.paused:
+        return const Color(0xFFFFBD2E);
+      case VmStatus.crashed:
+        return const Color(0xFFFF5F57);
+      default:
+        return Colors.white38;
     }
   }
 
@@ -59,14 +64,19 @@ class _VmCardState extends State<VmCard> with SingleTickerProviderStateMixin {
     return MouseRegion(
       cursor: SystemMouseCursors.click,
       onEnter: (_) => setState(() => _hovered = true),
-      onExit:  (_) => setState(() => _hovered = false),
+      onExit: (_) => setState(() => _hovered = false),
       child: GestureDetector(
         onTap: widget.onTap,
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
           curve: Curves.easeOutCubic,
           transform: Matrix4.identity()
-            ..scale(_hovered ? 1.02 : 1.0),
+            ..scaleByDouble(
+              _hovered ? 1.02 : 1.0,
+              _hovered ? 1.02 : 1.0,
+              1.0,
+              1.0,
+            ),
           child: VaxpGlass(
             blur: _hovered ? 22 : 16,
             opacity: _hovered ? 0.2 : 0.12,
@@ -86,11 +96,15 @@ class _VmCardState extends State<VmCard> with SingleTickerProviderStateMixin {
                             width: 10,
                             height: 10,
                             decoration: BoxDecoration(
-                              color: _statusColor.withOpacity(_pulse.value),
+                              color: _statusColor.withValues(
+                                alpha: _pulse.value,
+                              ),
                               shape: BoxShape.circle,
                               boxShadow: [
                                 BoxShadow(
-                                  color: _statusColor.withOpacity(0.5 * _pulse.value),
+                                  color: _statusColor.withValues(
+                                    alpha: 0.5 * _pulse.value,
+                                  ),
                                   blurRadius: 8,
                                   spreadRadius: 2,
                                 ),
@@ -135,14 +149,20 @@ class _VmCardState extends State<VmCard> with SingleTickerProviderStateMixin {
 
                   // ── OS Badge ────────────────────────────────────────────────
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 3,
+                    ),
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.08),
+                      color: Colors.white.withValues(alpha: 0.08),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
                       widget.vm.osType,
-                      style: const TextStyle(fontSize: 11, color: Colors.white60),
+                      style: const TextStyle(
+                        fontSize: 11,
+                        color: Colors.white60,
+                      ),
                     ),
                   ),
 
@@ -151,9 +171,15 @@ class _VmCardState extends State<VmCard> with SingleTickerProviderStateMixin {
                   // ── Specs row ───────────────────────────────────────────────
                   Row(
                     children: [
-                      _SpecChip(icon: Icons.memory, label: '${widget.vm.vcpus} vCPU'),
+                      _SpecChip(
+                        icon: Icons.memory,
+                        label: '${widget.vm.vcpus} vCPU',
+                      ),
                       const SizedBox(width: 8),
-                      _SpecChip(icon: Icons.storage, label: '${widget.vm.ramMb} MB'),
+                      _SpecChip(
+                        icon: Icons.storage,
+                        label: '${widget.vm.ramMb} MB',
+                      ),
                     ],
                   ),
 
@@ -183,7 +209,10 @@ class _SpecChip extends StatelessWidget {
       children: [
         Icon(icon, size: 13, color: Colors.white54),
         const SizedBox(width: 4),
-        Text(label, style: const TextStyle(fontSize: 12, color: Colors.white54)),
+        Text(
+          label,
+          style: const TextStyle(fontSize: 12, color: Colors.white54),
+        ),
       ],
     );
   }
@@ -204,7 +233,7 @@ class _ActionBar extends StatelessWidget {
           _ActionButton(
             icon: Icons.play_arrow_rounded,
             color: const Color(0xFF34C759),
-            tooltip: 'تشغيل',
+            tooltip: 'Start',
             enabled: !isPending,
             onTap: () => bloc.add(StartVm(vm.name)),
           ),
@@ -212,14 +241,14 @@ class _ActionBar extends StatelessWidget {
           _ActionButton(
             icon: Icons.stop_rounded,
             color: const Color(0xFFFF5F57),
-            tooltip: 'إيقاف',
+            tooltip: 'Stop',
             enabled: !isPending,
             onTap: () => bloc.add(StopVm(vm.name)),
           ),
           _ActionButton(
             icon: Icons.pause_rounded,
             color: const Color(0xFFFFBD2E),
-            tooltip: 'إيقاف مؤقت',
+            tooltip: 'Pause',
             enabled: !isPending,
             onTap: () => bloc.add(PauseVm(vm.name)),
           ),
@@ -228,7 +257,7 @@ class _ActionBar extends StatelessWidget {
           _ActionButton(
             icon: Icons.play_arrow_rounded,
             color: const Color(0xFFFFBD2E),
-            tooltip: 'استئناف',
+            tooltip: 'Resume',
             enabled: !isPending,
             onTap: () => bloc.add(ResumeVm(vm.name)),
           ),
@@ -236,7 +265,7 @@ class _ActionBar extends StatelessWidget {
         _ActionButton(
           icon: Icons.delete_outline_rounded,
           color: Colors.white38,
-          tooltip: 'حذف',
+          tooltip: 'Delete',
           enabled: !isPending,
           onTap: () => _showDeleteDialog(context, bloc),
         ),
@@ -250,22 +279,31 @@ class _ActionBar extends StatelessWidget {
       builder: (_) => AlertDialog(
         backgroundColor: const Color.fromARGB(230, 20, 20, 30),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: Text('حذف ${vm.name}؟', style: const TextStyle(color: Colors.white)),
+        title: Text(
+          'Delete ${vm.name}?',
+          style: const TextStyle(color: Colors.white),
+        ),
         content: const Text(
-          'سيتم حذف تعريف الآلة فقط. لن تُحذف ملفات القرص.',
+          'Only the VM definition will be deleted. Disk files will not be removed.',
           style: TextStyle(color: Colors.white70),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('إلغاء', style: TextStyle(color: Colors.white54)),
+            child: const Text(
+              'Cancel',
+              style: TextStyle(color: Colors.white54),
+            ),
           ),
           TextButton(
             onPressed: () {
               Navigator.pop(context);
               bloc.add(DeleteVm(vm.name));
             },
-            child: const Text('حذف', style: TextStyle(color: Color(0xFFFF5F57))),
+            child: const Text(
+              'Delete',
+              style: TextStyle(color: Color(0xFFFF5F57)),
+            ),
           ),
         ],
       ),
@@ -299,7 +337,9 @@ class _ActionButton extends StatelessWidget {
           height: 32,
           margin: const EdgeInsets.only(right: 6),
           decoration: BoxDecoration(
-            color: enabled ? color.withOpacity(0.15) : Colors.white.withOpacity(0.05),
+            color: enabled
+                ? color.withValues(alpha: 0.15)
+                : Colors.white.withValues(alpha: 0.05),
             borderRadius: BorderRadius.circular(10),
           ),
           child: Icon(icon, size: 16, color: enabled ? color : Colors.white24),

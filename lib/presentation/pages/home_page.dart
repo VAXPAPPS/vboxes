@@ -89,8 +89,8 @@ class _Sidebar extends StatelessWidget {
       width: 200,
       height: double.infinity,
       decoration: BoxDecoration(
-        color: Colors.black.withOpacity(0.25),
-        border: Border(right: BorderSide(color: Colors.white.withOpacity(0.08))),
+        color: const Color.fromARGB(0, 0, 0, 0),
+
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -106,27 +106,27 @@ class _Sidebar extends StatelessWidget {
           _SidebarLabel('VIRTUAL MACHINES'),
 
           _FilterTile(
-            label: 'الكل',
+            label: 'All',
             icon: Icons.grid_view_rounded,
             selected: selectedFilter == null,
             onTap: () => onFilterChanged(null),
           ),
           _FilterTile(
-            label: 'قيد التشغيل',
+            label: 'Running',
             icon: Icons.play_circle_outline_rounded,
             dotColor: const Color(0xFF34C759),
             selected: selectedFilter == VmStatus.running,
             onTap: () => onFilterChanged(VmStatus.running),
           ),
           _FilterTile(
-            label: 'متوقفة',
+            label: 'Stopped',
             icon: Icons.stop_circle_outlined,
             dotColor: Colors.white38,
             selected: selectedFilter == VmStatus.stopped,
             onTap: () => onFilterChanged(VmStatus.stopped),
           ),
           _FilterTile(
-            label: 'معلقة',
+            label: 'Paused',
             icon: Icons.pause_circle_outline_rounded,
             dotColor: const Color(0xFFFFBD2E),
             selected: selectedFilter == VmStatus.paused,
@@ -143,15 +143,22 @@ class _Sidebar extends StatelessWidget {
               child: Container(
                 padding: const EdgeInsets.symmetric(vertical: 10),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.06),
+                  color: Colors.white.withValues(alpha: 0.06),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: const Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.refresh_rounded, size: 16, color: Colors.white54),
+                    Icon(
+                      Icons.refresh_rounded,
+                      size: 16,
+                      color: Colors.white54,
+                    ),
                     SizedBox(width: 6),
-                    Text('تحديث', style: TextStyle(color: Colors.white54, fontSize: 12)),
+                    Text(
+                      'Refresh',
+                      style: TextStyle(color: Colors.white54, fontSize: 12),
+                    ),
                   ],
                 ),
               ),
@@ -179,7 +186,7 @@ class _SidebarCreateButtonState extends State<_SidebarCreateButton> {
     return MouseRegion(
       cursor: SystemMouseCursors.click,
       onEnter: (_) => setState(() => _hovered = true),
-      onExit:  (_) => setState(() => _hovered = false),
+      onExit: (_) => setState(() => _hovered = false),
       child: GestureDetector(
         onTap: widget.onTap,
         child: AnimatedContainer(
@@ -193,7 +200,12 @@ class _SidebarCreateButtonState extends State<_SidebarCreateButton> {
             ),
             borderRadius: BorderRadius.circular(12),
             boxShadow: _hovered
-                ? [BoxShadow(color: const Color(0xFF5E5CE6).withOpacity(0.4), blurRadius: 12)]
+                ? [
+                    BoxShadow(
+                      color: const Color(0xFF5E5CE6).withValues(alpha: 0.4),
+                      blurRadius: 12,
+                    ),
+                  ]
                 : [],
           ),
           child: const Row(
@@ -201,7 +213,14 @@ class _SidebarCreateButtonState extends State<_SidebarCreateButton> {
             children: [
               Icon(Icons.add_rounded, size: 18, color: Colors.white),
               SizedBox(width: 6),
-              Text('آلة جديدة', style: TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w600)),
+              Text(
+                'New VM',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
             ],
           ),
         ),
@@ -216,7 +235,14 @@ class _SidebarLabel extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Padding(
     padding: const EdgeInsets.only(left: 16, bottom: 6, top: 2),
-    child: Text(text, style: const TextStyle(fontSize: 10, color: Colors.white30, letterSpacing: 1)),
+    child: Text(
+      text,
+      style: const TextStyle(
+        fontSize: 10,
+        color: Colors.white30,
+        letterSpacing: 1,
+      ),
+    ),
   );
 }
 
@@ -244,12 +270,18 @@ class _FilterTile extends StatelessWidget {
         margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
         decoration: BoxDecoration(
-          color: selected ? Colors.white.withOpacity(0.1) : Colors.transparent,
+          color: selected
+              ? Colors.white.withValues(alpha: 0.1)
+              : Colors.transparent,
           borderRadius: BorderRadius.circular(10),
         ),
         child: Row(
           children: [
-            Icon(icon, size: 16, color: selected ? Colors.white : Colors.white54),
+            Icon(
+              icon,
+              size: 16,
+              color: selected ? Colors.white : Colors.white54,
+            ),
             const SizedBox(width: 8),
             Text(
               label,
@@ -264,7 +296,10 @@ class _FilterTile extends StatelessWidget {
               Container(
                 width: 7,
                 height: 7,
-                decoration: BoxDecoration(color: dotColor, shape: BoxShape.circle),
+                decoration: BoxDecoration(
+                  color: dotColor,
+                  shape: BoxShape.circle,
+                ),
               ),
             ],
           ],
@@ -294,7 +329,8 @@ class _VmGrid extends StatelessWidget {
         }
 
         if (state is VmListError) {
-          return _ErrorView(message: state.message,
+          return _ErrorView(
+            message: state.message,
             onRetry: () => context.read<VmListBloc>().add(const LoadVms()),
           );
         }
@@ -317,12 +353,13 @@ class _VmGrid extends StatelessWidget {
                 child: Padding(
                   padding: const EdgeInsets.all(20),
                   child: GridView.builder(
-                    gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                      maxCrossAxisExtent: 320,
-                      mainAxisSpacing: 16,
-                      crossAxisSpacing: 16,
-                      childAspectRatio: 1.05,
-                    ),
+                    gridDelegate:
+                        const SliverGridDelegateWithMaxCrossAxisExtent(
+                          maxCrossAxisExtent: 320,
+                          mainAxisSpacing: 16,
+                          crossAxisSpacing: 16,
+                          childAspectRatio: 1.05,
+                        ),
                     itemCount: vms.length,
                     itemBuilder: (context, i) {
                       final vm = vms[i];
@@ -368,14 +405,22 @@ class _ErrorView extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(Icons.error_outline_rounded, size: 48, color: Color(0xFFFF5F57)),
+          const Icon(
+            Icons.error_outline_rounded,
+            size: 48,
+            color: Color(0xFFFF5F57),
+          ),
           const SizedBox(height: 16),
-          Text(message, style: const TextStyle(color: Colors.white70), textAlign: TextAlign.center),
+          Text(
+            message,
+            style: const TextStyle(color: Colors.white70),
+            textAlign: TextAlign.center,
+          ),
           const SizedBox(height: 20),
           ElevatedButton.icon(
             onPressed: onRetry,
             icon: const Icon(Icons.refresh_rounded),
-            label: const Text('إعادة المحاولة'),
+            label: const Text('Retry'),
           ),
         ],
       ),
@@ -394,15 +439,23 @@ class _EmptyView extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(
-            filter == null ? Icons.computer_outlined : Icons.filter_list_off_rounded,
+            filter == null
+                ? Icons.computer_outlined
+                : Icons.filter_list_off_rounded,
             size: 64,
             color: Colors.white24,
           ),
           const SizedBox(height: 16),
           Text(
-            filter == null ? 'لا توجد آلات افتراضية\nاضغط "+ آلة جديدة" للبدء' : 'لا توجد آلات بهذه الحالة',
+            filter == null
+                ? 'No virtual machines\nPress "+ New VM" to get started'
+                : 'No machines match this status',
             textAlign: TextAlign.center,
-            style: const TextStyle(color: Colors.white38, fontSize: 15, height: 1.6),
+            style: const TextStyle(
+              color: Colors.white38,
+              fontSize: 15,
+              height: 1.6,
+            ),
           ),
         ],
       ),
@@ -419,12 +472,21 @@ class _ErrorBanner extends StatelessWidget {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-      color: const Color(0xFFFF5F57).withOpacity(0.15),
+      color: const Color(0xFFFF5F57).withValues(alpha: 0.15),
       child: Row(
         children: [
-          const Icon(Icons.warning_amber_rounded, size: 16, color: Color(0xFFFF5F57)),
+          const Icon(
+            Icons.warning_amber_rounded,
+            size: 16,
+            color: Color(0xFFFF5F57),
+          ),
           const SizedBox(width: 8),
-          Expanded(child: Text(message, style: const TextStyle(color: Color(0xFFFF5F57), fontSize: 12))),
+          Expanded(
+            child: Text(
+              message,
+              style: const TextStyle(color: Color(0xFFFF5F57), fontSize: 12),
+            ),
+          ),
         ],
       ),
     );

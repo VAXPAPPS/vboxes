@@ -18,8 +18,8 @@ class CreateVmPage extends StatelessWidget {
         if (state is CreateVmSuccess) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('✅ تم إنشاء "${state.vmName}" بنجاح'),
-              backgroundColor: const Color(0xFF34C759).withOpacity(0.9),
+              content: Text('✅ "${state.vmName}" was created successfully'),
+              backgroundColor: const Color(0xFF34C759).withValues(alpha: 0.9),
             ),
           );
           onCreated();
@@ -29,13 +29,14 @@ class CreateVmPage extends StatelessWidget {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text('❌ ${state.message}'),
-              backgroundColor: const Color(0xFFFF5F57).withOpacity(0.9),
+              backgroundColor: const Color(0xFFFF5F57).withValues(alpha: 0.9),
             ),
           );
         }
       },
       child: VenomScaffold(
-        title: 'آلة افتراضية جديدة',
+        title: 'New Virtual Machine',
+        showBackButton: true,
         body: Center(
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(32),
@@ -44,10 +45,7 @@ class CreateVmPage extends StatelessWidget {
               opacity: 0.18,
               child: Padding(
                 padding: const EdgeInsets.all(32),
-                child: SizedBox(
-                  width: 520,
-                  child: _CreateForm(),
-                ),
+                child: SizedBox(width: 520, child: _CreateForm()),
               ),
             ),
           ),
@@ -63,10 +61,16 @@ class _CreateForm extends StatefulWidget {
 }
 
 class _CreateFormState extends State<_CreateForm> {
-  final _nameCtrl    = TextEditingController();
-  final _isoCtrl     = TextEditingController();
+  final _nameCtrl = TextEditingController();
+  final _isoCtrl = TextEditingController();
 
-  static const _osOptions = ['Linux', 'Ubuntu/Debian', 'Fedora/RHEL', 'Windows', 'Other'];
+  static const _osOptions = [
+    'Linux',
+    'Ubuntu/Debian',
+    'Fedora/RHEL',
+    'Windows',
+    'Other',
+  ];
 
   @override
   void dispose() {
@@ -87,32 +91,38 @@ class _CreateFormState extends State<_CreateForm> {
           children: [
             // Header
             const Text(
-              'إنشاء آلة افتراضية',
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white),
+              'Create Virtual Machine',
+              style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
             ),
             const SizedBox(height: 4),
             const Text(
-              'تعمل على QEMU/KVM عبر libvirt',
+              'Runs on QEMU/KVM through libvirt',
               style: TextStyle(fontSize: 13, color: Colors.white54),
             ),
             const SizedBox(height: 28),
 
             // Name
-            _FieldLabel('اسم الآلة'),
+            _FieldLabel('VM Name'),
             _GlassField(
               controller: _nameCtrl,
-              hint: 'مثال: VAXP-OS',
+              hint: 'Example: VAXP-OS',
               error: form?.nameError,
-              onChanged: (v) => context.read<CreateVmBloc>().add(UpdateVmName(v)),
+              onChanged: (v) =>
+                  context.read<CreateVmBloc>().add(UpdateVmName(v)),
             ),
             const SizedBox(height: 16),
 
             // OS
-            _FieldLabel('نظام التشغيل'),
+            _FieldLabel('Operating System'),
             _OsDropdown(
               value: form?.osType ?? 'Linux',
               options: _osOptions,
-              onChanged: (v) => context.read<CreateVmBloc>().add(UpdateOsType(v)),
+              onChanged: (v) =>
+                  context.read<CreateVmBloc>().add(UpdateOsType(v)),
             ),
             const SizedBox(height: 16),
 
@@ -123,12 +133,13 @@ class _CreateFormState extends State<_CreateForm> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _FieldLabel('عدد المعالجات (vCPU)'),
+                      _FieldLabel('Processors (vCPU)'),
                       _StepperField(
                         value: form?.vcpus ?? 2,
                         min: 1,
                         max: 16,
-                        onChanged: (v) => context.read<CreateVmBloc>().add(UpdateVcpus(v)),
+                        onChanged: (v) =>
+                            context.read<CreateVmBloc>().add(UpdateVcpus(v)),
                       ),
                     ],
                   ),
@@ -138,13 +149,14 @@ class _CreateFormState extends State<_CreateForm> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _FieldLabel('الذاكرة (MB)'),
+                      _FieldLabel('Memory (MB)'),
                       _StepperField(
                         value: form?.ramMb ?? 2048,
                         min: 256,
                         max: 65536,
                         step: 256,
-                        onChanged: (v) => context.read<CreateVmBloc>().add(UpdateRamMb(v)),
+                        onChanged: (v) =>
+                            context.read<CreateVmBloc>().add(UpdateRamMb(v)),
                       ),
                     ],
                   ),
@@ -154,22 +166,24 @@ class _CreateFormState extends State<_CreateForm> {
             const SizedBox(height: 16),
 
             // Disk size
-            _FieldLabel('حجم القرص الافتراضي (GB)'),
+            _FieldLabel('Virtual Disk Size (GB)'),
             _SliderField(
               value: (form?.diskSizeGb ?? 20).toDouble(),
               min: 5,
               max: 500,
-              onChanged: (v) => context.read<CreateVmBloc>().add(UpdateDiskSizeGb(v.toInt())),
+              onChanged: (v) =>
+                  context.read<CreateVmBloc>().add(UpdateDiskSizeGb(v.toInt())),
             ),
             const SizedBox(height: 16),
 
             // ISO path
-            _FieldLabel('مسار ملف التثبيت ISO (اختياري)'),
+            _FieldLabel('Installer ISO Path (Optional)'),
             _FilePickerField(
               controller: _isoCtrl,
               hint: '/home/user/vaxp-os.iso',
               allowedExtensions: const ['iso'],
-              onChanged: (v) => context.read<CreateVmBloc>().add(UpdateIsoPath(v)),
+              onChanged: (v) =>
+                  context.read<CreateVmBloc>().add(UpdateIsoPath(v)),
             ),
             const SizedBox(height: 28),
 
@@ -180,7 +194,8 @@ class _CreateFormState extends State<_CreateForm> {
               child: _SubmitButton(
                 enabled: form?.isValid == true && !isSubmitting,
                 isLoading: isSubmitting,
-                onTap: () => context.read<CreateVmBloc>().add(const SubmitCreateVm()),
+                onTap: () =>
+                    context.read<CreateVmBloc>().add(const SubmitCreateVm()),
               ),
             ),
           ],
@@ -197,7 +212,14 @@ class _FieldLabel extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Padding(
     padding: const EdgeInsets.only(bottom: 6),
-    child: Text(text, style: const TextStyle(fontSize: 13, color: Colors.white70, fontWeight: FontWeight.w500)),
+    child: Text(
+      text,
+      style: const TextStyle(
+        fontSize: 13,
+        color: Colors.white70,
+        fontWeight: FontWeight.w500,
+      ),
+    ),
   );
 }
 
@@ -224,14 +246,14 @@ class _GlassField extends StatelessWidget {
         hintText: hint,
         errorText: error,
         filled: true,
-        fillColor: Colors.white.withOpacity(0.07),
+        fillColor: Colors.white.withValues(alpha: 0.07),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: Colors.white.withOpacity(0.15)),
+          borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.15)),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: Colors.white.withOpacity(0.12)),
+          borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.12)),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
@@ -241,7 +263,10 @@ class _GlassField extends StatelessWidget {
           borderRadius: BorderRadius.circular(12),
           borderSide: const BorderSide(color: Color(0xFFFF5F57)),
         ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 14,
+          vertical: 12,
+        ),
       ),
     );
   }
@@ -252,16 +277,20 @@ class _OsDropdown extends StatelessWidget {
   final List<String> options;
   final ValueChanged<String> onChanged;
 
-  const _OsDropdown({required this.value, required this.options, required this.onChanged});
+  const _OsDropdown({
+    required this.value,
+    required this.options,
+    required this.onChanged,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.07),
+        color: Colors.white.withValues(alpha: 0.07),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.white.withOpacity(0.12)),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.12)),
       ),
       child: DropdownButton<String>(
         value: value,
@@ -269,8 +298,12 @@ class _OsDropdown extends StatelessWidget {
         dropdownColor: const Color(0xFF1C1C2E),
         underline: const SizedBox.shrink(),
         style: const TextStyle(color: Colors.white),
-        items: options.map((o) => DropdownMenuItem(value: o, child: Text(o))).toList(),
-        onChanged: (v) { if (v != null) onChanged(v); },
+        items: options
+            .map((o) => DropdownMenuItem(value: o, child: Text(o)))
+            .toList(),
+        onChanged: (v) {
+          if (v != null) onChanged(v);
+        },
       ),
     );
   }
@@ -295,21 +328,30 @@ class _StepperField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.07),
+        color: Colors.white.withValues(alpha: 0.07),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.white.withOpacity(0.12)),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.12)),
       ),
       child: Row(
         children: [
-          _StepBtn(icon: Icons.remove, onTap: value > min ? () => onChanged(value - step) : null),
+          _StepBtn(
+            icon: Icons.remove,
+            onTap: value > min ? () => onChanged(value - step) : null,
+          ),
           Expanded(
             child: Text(
               value.toString(),
               textAlign: TextAlign.center,
-              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+              style: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ),
-          _StepBtn(icon: Icons.add, onTap: value < max ? () => onChanged(value + step) : null),
+          _StepBtn(
+            icon: Icons.add,
+            onTap: value < max ? () => onChanged(value + step) : null,
+          ),
         ],
       ),
     );
@@ -328,7 +370,11 @@ class _StepBtn extends StatelessWidget {
       width: 36,
       height: 44,
       alignment: Alignment.center,
-      child: Icon(icon, size: 18, color: onTap != null ? Colors.white70 : Colors.white24),
+      child: Icon(
+        icon,
+        size: 18,
+        color: onTap != null ? Colors.white70 : Colors.white24,
+      ),
     ),
   );
 }
@@ -337,7 +383,11 @@ class _SubmitButton extends StatefulWidget {
   final bool enabled;
   final bool isLoading;
   final VoidCallback onTap;
-  const _SubmitButton({required this.enabled, required this.isLoading, required this.onTap});
+  const _SubmitButton({
+    required this.enabled,
+    required this.isLoading,
+    required this.onTap,
+  });
 
   @override
   State<_SubmitButton> createState() => _SubmitButtonState();
@@ -349,9 +399,11 @@ class _SubmitButtonState extends State<_SubmitButton> {
   @override
   Widget build(BuildContext context) {
     return MouseRegion(
-      cursor: widget.enabled ? SystemMouseCursors.click : SystemMouseCursors.basic,
+      cursor: widget.enabled
+          ? SystemMouseCursors.click
+          : SystemMouseCursors.basic,
       onEnter: (_) => setState(() => _hovered = true),
-      onExit:  (_) => setState(() => _hovered = false),
+      onExit: (_) => setState(() => _hovered = false),
       child: GestureDetector(
         onTap: widget.enabled ? widget.onTap : null,
         child: AnimatedContainer(
@@ -359,24 +411,48 @@ class _SubmitButtonState extends State<_SubmitButton> {
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: widget.enabled
-                  ? (_hovered ? [const Color(0xFF7B79FF), const Color(0xFF5E5CE6)] : [const Color(0xFF5E5CE6), const Color(0xFF3D3BAA)])
+                  ? (_hovered
+                        ? [const Color(0xFF7B79FF), const Color(0xFF5E5CE6)]
+                        : [const Color(0xFF5E5CE6), const Color(0xFF3D3BAA)])
                   : [Colors.white12, Colors.white10],
             ),
             borderRadius: BorderRadius.circular(14),
             boxShadow: widget.enabled && _hovered
-                ? [BoxShadow(color: const Color(0xFF5E5CE6).withOpacity(0.5), blurRadius: 16)]
+                ? [
+                    BoxShadow(
+                      color: const Color(0xFF5E5CE6).withValues(alpha: 0.5),
+                      blurRadius: 16,
+                    ),
+                  ]
                 : [],
           ),
           child: Center(
             child: widget.isLoading
-                ? const SizedBox(width: 20, height: 20,
-                    child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+                ? const SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: Colors.white,
+                    ),
+                  )
                 : const Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(Icons.rocket_launch_rounded, size: 18, color: Colors.white),
+                      Icon(
+                        Icons.rocket_launch_rounded,
+                        size: 18,
+                        color: Colors.white,
+                      ),
                       SizedBox(width: 8),
-                      Text('إنشاء الآلة', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 15)),
+                      Text(
+                        'Create VM',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 15,
+                        ),
+                      ),
                     ],
                   ),
           ),
@@ -412,14 +488,14 @@ class _FilePickerField extends StatelessWidget {
         hintText: hint,
         errorText: error,
         filled: true,
-        fillColor: Colors.white.withOpacity(0.07),
+        fillColor: Colors.white.withValues(alpha: 0.07),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: Colors.white.withOpacity(0.15)),
+          borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.15)),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: Colors.white.withOpacity(0.12)),
+          borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.12)),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
@@ -429,14 +505,19 @@ class _FilePickerField extends StatelessWidget {
           borderRadius: BorderRadius.circular(12),
           borderSide: const BorderSide(color: Color(0xFFFF5F57)),
         ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 14,
+          vertical: 12,
+        ),
         suffixIcon: Padding(
           padding: const EdgeInsets.only(right: 4.0),
           child: IconButton(
             icon: const Icon(Icons.folder_open_rounded, color: Colors.white54),
             onPressed: () async {
               final result = await FilePicker.platform.pickFiles(
-                type: allowedExtensions != null ? FileType.custom : FileType.any,
+                type: allowedExtensions != null
+                    ? FileType.custom
+                    : FileType.any,
                 allowedExtensions: allowedExtensions,
               );
               if (result != null && result.files.single.path != null) {
@@ -469,15 +550,19 @@ class _SliderField extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.07),
+        color: Colors.white.withValues(alpha: 0.07),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.white.withOpacity(0.12)),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.12)),
       ),
       child: Row(
         children: [
           Text(
             '${value.toInt()} GB',
-            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
+            style: const TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+              fontSize: 16,
+            ),
           ),
           const SizedBox(width: 16),
           Expanded(
@@ -486,7 +571,7 @@ class _SliderField extends StatelessWidget {
                 activeTrackColor: const Color(0xFF5E5CE6),
                 inactiveTrackColor: Colors.white24,
                 thumbColor: Colors.white,
-                overlayColor: const Color(0xFF5E5CE6).withOpacity(0.2),
+                overlayColor: const Color(0xFF5E5CE6).withValues(alpha: 0.2),
                 trackHeight: 4.0,
               ),
               child: Slider(
@@ -503,4 +588,3 @@ class _SliderField extends StatelessWidget {
     );
   }
 }
-
