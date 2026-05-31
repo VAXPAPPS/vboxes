@@ -1,0 +1,9 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=vboxes
+Comment=Flutter Application - vboxes
+Exec=/usr/bin/vboxes
+Icon=/usr/share/icons/hicolor/256x256/apps/vboxes.png
+Terminal=false
+Categories=Utility;Development;
