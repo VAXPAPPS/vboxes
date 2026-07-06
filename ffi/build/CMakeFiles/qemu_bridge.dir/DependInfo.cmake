@@ -8,7 +8,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
-  "/home/x/Desktop/Vaxp-Template/ffi/qemu_bridge.cc" "CMakeFiles/qemu_bridge.dir/qemu_bridge.cc.o" "gcc" "CMakeFiles/qemu_bridge.dir/qemu_bridge.cc.o.d"
+  "/home/x/Work/vboxes/ffi/qemu_bridge.cc" "CMakeFiles/qemu_bridge.dir/qemu_bridge.cc.o" "gcc" "CMakeFiles/qemu_bridge.dir/qemu_bridge.cc.o.d"
   )
 
 # Targets to which this target links which contain Fortran sources.

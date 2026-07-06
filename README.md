@@ -74,7 +74,7 @@ ffi/
 
 ```bash
 # Required: QEMU/KVM and libvirt
-sudo apt install qemu-kvm libvirt-daemon-system libvirt-dev
+sudo apt install qemu-kvm libvirt-daemon-system libvirt-dev libvirt-clients bridge-utils
 
 # Required: SPICE display viewer
 sudo apt install virt-viewer

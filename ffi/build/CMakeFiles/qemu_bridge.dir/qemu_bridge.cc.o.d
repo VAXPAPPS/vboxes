@@ -1,8 +1,7 @@
 CMakeFiles/qemu_bridge.dir/qemu_bridge.cc.o: \
- /home/x/Desktop/Vaxp-Template/ffi/qemu_bridge.cc \
- /usr/include/stdc-predef.h /usr/include/libvirt/libvirt.h \
- /usr/include/x86_64-linux-gnu/sys/types.h /usr/include/features.h \
- /usr/include/features-time64.h \
+ /home/x/Work/vboxes/ffi/qemu_bridge.cc /usr/include/stdc-predef.h \
+ /usr/include/libvirt/libvirt.h /usr/include/x86_64-linux-gnu/sys/types.h \
+ /usr/include/features.h /usr/include/features-time64.h \
  /usr/include/x86_64-linux-gnu/bits/wordsize.h \
  /usr/include/x86_64-linux-gnu/bits/timesize.h \
  /usr/include/x86_64-linux-gnu/sys/cdefs.h \
